@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Office Trivia Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f1ebd9;
+    --paper-2: #e6dec5;
+    --ink: #1f1f1f;
+    --ink-soft: #3a3a3a;
+    --navy: #0b3556;
+    --navy-2: #1a4d77;
+    --olive: #6b7e3e;
+    --rust: #b04a30;
+    --gold: #d4a017;
+    --line: #1f1f1f;
+    --shadow: rgba(31, 31, 31, 0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      repeating-linear-gradient(90deg, transparent 0 60px, rgba(11, 53, 86, 0.025) 60px 61px),
+      repeating-linear-gradient(0deg, transparent 0 60px, rgba(11, 53, 86, 0.025) 60px 61px);
+    padding: 32px 16px 64px;
+  }
+
+  .stage { max-width: 780px; margin: 0 auto; }
+
+  /* ───────────── HEADER ───────────── */
+  header.hero {
+    text-align: center;
+    padding: 16px 0 30px;
+    border-bottom: 4px double var(--ink);
+    margin-bottom: 28px;
+    position: relative;
+  }
+  header.hero::before {
+    content: "MEMO";
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 14px;
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--navy);
+  }
+  .kicker {
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 0.25em;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 12px 0 4px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 9vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    color: var(--navy);
+    text-transform: uppercase;
+    margin: 6px 0 0;
+  }
+  h1 .office {
+    color: var(--rust);
+  }
+  .subtitle {
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+  }
+  .tagline {
+    font-style: italic;
+    font-size: 16px;
+    opacity: 0.8;
+    max-width: 540px;
+    margin: 14px auto 0;
+  }
+
+  /* ───────────── SCORE BAR ───────────── */
+  .scorebar {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 2px;
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    box-shadow: 4px 4px 0 var(--shadow);
+    position: sticky;
+    top: 8px;
+    z-index: 30;
+    border-left: 5px solid var(--rust);
+  }
+  .scorebar .meta {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .scorebar .points {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+  .progress {
+    flex: 1 0 100%;
+    height: 5px;
+    background: rgba(241, 235, 217, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress > span {
+    display: block; height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ───────────── INTRO PANEL ───────────── */
+  .intro {
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    padding: 28px 28px 24px;
+    margin-bottom: 28px;
+    box-shadow: 5px 5px 0 var(--shadow);
+    border-top: 6px solid var(--navy);
+  }
+  .intro h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    margin-bottom: 14px;
+    color: var(--navy);
+    text-transform: uppercase;
+  }
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 22px 0;
+  }
+  .rule {
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 14px;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .rule .pts {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    display: block;
+    margin-bottom: 2px;
+    line-height: 1;
+  }
+  .rule.easy .pts { color: var(--olive); }
+  .rule.medium .pts { color: var(--gold); }
+  .rule.hard .pts { color: var(--rust); }
+  .rule .label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  @media (max-width: 480px) { .rules { grid-template-columns: 1fr; } }
+
+  .start-btn, .restart-btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    background: var(--rust);
+    color: white;
+    border: 2px solid var(--ink);
+    padding: 12px 32px;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    text-transform: uppercase;
+  }
+  .start-btn:hover, .restart-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+  .start-btn:active, .restart-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--ink); }
+
+  /* ───────────── QUESTION CARD ───────────── */
+  .quiz-area { display: none; }
+  .quiz-area.active { display: block; }
+
+  .qcard {
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 5px 5px 0 var(--shadow);
+    position: relative;
+    border-top: 6px solid var(--navy);
+  }
+  .qcard .qheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .qnum {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.75;
+  }
+  .pill {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 100px;
+  }
+  .pill.easy { background: var(--olive); color: white; }
+  .pill.medium { background: var(--gold); color: var(--ink); }
+  .pill.hard { background: var(--rust); color: white; }
+
+  .qtext {
+    font-size: 21px;
+    line-height: 1.4;
+    margin-bottom: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    border-radius: 2px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    text-align: left;
+    transition: transform 0.08s ease, background 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+  }
+  .choice:hover:not(.locked) { background: var(--gold); transform: translateX(4px); }
+  .choice .marker {
+    font-family: 'Bebas Neue', sans-serif;
+    background: var(--navy);
+    color: var(--paper);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .choice.correct { background: var(--olive); color: white; }
+  .choice.correct .marker { background: white; color: var(--olive); }
+  .choice.incorrect { background: var(--rust); color: white; }
+  .choice.incorrect .marker { background: white; color: var(--rust); }
+  .choice.locked { cursor: default; }
+  .choice.faded { opacity: 0.45; }
+
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: var(--paper-2);
+    border-left: 5px solid var(--navy);
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.shown { display: block; }
+  .feedback .src {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+  .feedback .verdict {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .feedback .verdict.yes { color: var(--olive); }
+  .feedback .verdict.no { color: var(--rust); }
+
+  .nav { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .next-btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 10px 24px;
+    cursor: pointer;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: none;
+  }
+  .next-btn.shown { display: inline-block; }
+  .next-btn:hover { background: var(--navy); }
+
+  /* ───────────── RESULTS ───────────── */
+  .results {
+    display: none;
+    text-align: center;
+    background: white;
+    border: 2px solid var(--ink);
+    padding: 36px 28px;
+    border-radius: 2px;
+    box-shadow: 5px 5px 0 var(--shadow);
+    border-top: 6px solid var(--rust);
+  }
+  .results.active { display: block; }
+  .results .verdict-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+    color: var(--navy);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1;
+  }
+  .results .verdict-rank {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    color: var(--rust);
+  }
+  .scorebox {
+    display: inline-block;
+    border: 2px solid var(--ink);
+    padding: 18px 36px;
+    margin: 12px auto 18px;
+    background: var(--paper);
+  }
+  .scorebox .big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .scorebox .out-of {
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    opacity: 0.7;
+    letter-spacing: 0.1em;
+  }
+  .results p.blurb {
+    font-style: italic;
+    max-width: 480px;
+    margin: 0 auto 8px;
+  }
+  .breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 480px;
+    margin: 24px auto;
+  }
+  .breakdown div {
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 12px;
+  }
+  .breakdown div strong { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--navy); }
+  .breakdown div span { font-family: 'Courier Prime', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; }
+  @media (max-width: 480px) { .breakdown { grid-template-columns: 1fr; } }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 2px dashed var(--ink);
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="hero">
+    <div class="kicker">Internal Document · Eyes Only</div>
+    <h1>The <span class="office">Office</span> Trivia</h1>
+    <div class="subtitle">— Scranton Branch — Est. 2005 —</div>
+    <p class="tagline">65 questions across 9 seasons. Are you Assistant Regional Manager material, or strictly a temp?</p>
+  </header>
+
+  <!-- INTRO -->
+  <section class="intro" id="intro">
+    <h2>How it works</h2>
+    <p>You'll face 65 multiple-choice questions in random order, scored by difficulty. After every answer, you'll see the correct response and the episode it came from. No SOURCES.md cheat sheet — the episode citation appears inline once you answer.</p>
+    <div class="rules">
+      <div class="rule easy"><span class="pts">1</span><span class="label">Easy — 20 questions</span></div>
+      <div class="rule medium"><span class="pts">3</span><span class="label">Medium — 25 questions</span></div>
+      <div class="rule hard"><span class="pts">5</span><span class="label">Hard — 20 questions</span></div>
+    </div>
+    <p style="text-align:center; margin-top:24px;">
+      <button class="start-btn" id="startBtn">Begin the Quiz</button>
+    </p>
+  </section>
+
+  <!-- SCORE BAR -->
+  <div class="scorebar" id="scorebar" style="display:none;">
+    <div class="meta">Q <span id="qNum">1</span> / <span id="qTotal">65</span></div>
+    <div class="meta">Score <span class="points" id="scoreNow">0</span> / <span id="scoreMax">0</span></div>
+    <div class="progress"><span id="progressBar"></span></div>
+  </div>
+
+  <!-- QUIZ -->
+  <section class="quiz-area" id="quizArea">
+    <div class="qcard" id="qcard">
+      <div class="qheader">
+        <div class="qnum" id="qLabel">Question 1</div>
+        <div class="pill easy" id="qPill">Easy · 1 pt</div>
+      </div>
+      <div class="qtext" id="qText">Loading…</div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback">
+        <div class="verdict" id="verdict"></div>
+        <div id="feedbackBody"></div>
+        <div class="src" id="srcLine"></div>
+      </div>
+      <div class="nav">
+        <button class="next-btn" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results" id="results">
+    <div class="verdict-title" id="resultTitle">Performance Review</div>
+    <div class="verdict-rank" id="resultRank">— Final assessment pending —</div>
+    <div class="scorebox">
+      <div class="big" id="finalScore">0</div>
+      <div class="out-of">out of <span id="finalMax">0</span></div>
+    </div>
+    <p class="blurb" id="resultBlurb"></p>
+    <div class="breakdown" id="breakdown"></div>
+    <button class="restart-btn" id="restartBtn">Try Again</button>
+  </section>
+
+  <footer>
+    <p>No affiliation with The Office, NBC, or Universal. Trivia only — all character names and episode references belong to their respective owners.</p>
+  </footer>
+</div>
+
+<script src="questions.js"></script>
+<script>
+  let state = { order: [], idx: 0, score: 0, answers: [], started: false };
+  const maxScore = QUESTIONS.reduce((s, q) => s + q.points, 0);
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function buildOrder() { return shuffle(QUESTIONS); }
+
+  function startQuiz() {
+    state.order = buildOrder();
+    state.idx = 0; state.score = 0; state.answers = []; state.started = true;
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('scorebar').style.display = 'flex';
+    document.getElementById('quizArea').classList.add('active');
+    document.getElementById('qTotal').textContent = state.order.length;
+    document.getElementById('scoreMax').textContent = maxScore;
+    document.getElementById('finalMax').textContent = maxScore;
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = state.order[state.idx];
+    document.getElementById('qNum').textContent = state.idx + 1;
+    document.getElementById('scoreNow').textContent = state.score;
+    document.getElementById('progressBar').style.width = ((state.idx) / state.order.length * 100) + '%';
+    document.getElementById('qLabel').textContent = 'Question ' + (state.idx + 1);
+    const pill = document.getElementById('qPill');
+    pill.className = 'pill ' + q.difficulty;
+    pill.textContent = q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1) + ' · ' + q.points + ' pt' + (q.points > 1 ? 's' : '');
+    document.getElementById('qText').textContent = q.q;
+    const choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice';
+      btn.innerHTML = '<span class="marker">' + labels[i] + '</span><span>' + choice + '</span>';
+      btn.addEventListener('click', () => handleAnswer(i, btn));
+      choicesEl.appendChild(btn);
+    });
+    document.getElementById('feedback').classList.remove('shown');
+    document.getElementById('nextBtn').classList.remove('shown');
+  }
+
+  function handleAnswer(selectedIdx, btn) {
+    const q = state.order[state.idx];
+    const allChoices = document.querySelectorAll('.choice');
+    const correct = selectedIdx === q.answer;
+    allChoices.forEach((c, i) => {
+      c.classList.add('locked');
+      if (i === q.answer) c.classList.add('correct');
+      else if (i === selectedIdx) c.classList.add('incorrect');
+      else c.classList.add('faded');
+    });
+    if (correct) state.score += q.points;
+    state.answers.push({ id: q.id, correct: correct, points: correct ? q.points : 0 });
+    const fb = document.getElementById('feedback');
+    const verdict = document.getElementById('verdict');
+    const body = document.getElementById('feedbackBody');
+    const src = document.getElementById('srcLine');
+    if (correct) { verdict.className = 'verdict yes'; verdict.textContent = '✓ Correct — +' + q.points + ' pt' + (q.points > 1 ? 's' : ''); }
+    else { verdict.className = 'verdict no'; verdict.textContent = '✗ Incorrect — the answer is ' + ['A','B','C','D'][q.answer]; }
+    let bodyText = '';
+    if (q.note) bodyText += q.note + ' ';
+    body.textContent = bodyText.trim();
+    src.textContent = 'Source: ' + q.episode;
+    fb.classList.add('shown');
+    document.getElementById('scoreNow').textContent = state.score;
+    document.getElementById('nextBtn').classList.add('shown');
+  }
+
+  function nextQuestion() {
+    state.idx++;
+    if (state.idx >= state.order.length) showResults();
+    else { renderQuestion(); document.getElementById('qcard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+
+  function showResults() {
+    document.getElementById('quizArea').classList.remove('active');
+    document.getElementById('results').classList.add('active');
+    document.getElementById('scorebar').style.display = 'none';
+    document.getElementById('finalScore').textContent = state.score;
+    const pct = state.score / maxScore;
+    const rank = getRank(pct);
+    document.getElementById('resultTitle').textContent = rank.title;
+    document.getElementById('resultRank').textContent = rank.rank;
+    document.getElementById('resultBlurb').textContent = rank.blurb;
+    const byDiff = { easy: { right: 0, total: 0 }, medium: { right: 0, total: 0 }, hard: { right: 0, total: 0 } };
+    state.order.forEach((q, i) => {
+      byDiff[q.difficulty].total++;
+      if (state.answers[i] && state.answers[i].correct) byDiff[q.difficulty].right++;
+    });
+    document.getElementById('breakdown').innerHTML =
+      '<div><strong>' + byDiff.easy.right + ' / ' + byDiff.easy.total + '</strong><span>Easy</span></div>' +
+      '<div><strong>' + byDiff.medium.right + ' / ' + byDiff.medium.total + '</strong><span>Medium</span></div>' +
+      '<div><strong>' + byDiff.hard.right + ' / ' + byDiff.hard.total + '</strong><span>Hard</span></div>';
+  }
+
+  function getRank(pct) {
+    if (pct >= 0.95) return { title: "World's Best Boss", rank: 'TIER S · Dundie-winning performance', blurb: "Truly elite. You probably have a coffee mug, a vanity license plate, and a screenplay called Threat Level Midnight." };
+    if (pct >= 0.80) return { title: "Assistant Regional Manager", rank: 'TIER A · Dwight-tier obsession', blurb: "Identification, the prize. Excellent recall — bears, beets, Battlestar Galactica." };
+    if (pct >= 0.65) return { title: "Salesman of the Quarter", rank: 'TIER B · Solid Scranton credentials', blurb: "Pretty good. You'd hold your own at a Dundie Awards table." };
+    if (pct >= 0.50) return { title: "Working Through the Boxes", rank: 'TIER C · Middle of the pack', blurb: "You know the hits. Time to dig into Seasons 2–5 for the deep cuts." };
+    if (pct >= 0.30) return { title: "Toby-Tier", rank: 'TIER D · From HR, with regret', blurb: "Some big moments are in there, but the deeper bits got past you. Why are you the way that you are?" };
+    return { title: "Identity Theft Is Not A Joke, Jim!", rank: 'TIER F · Demotion to warehouse', blurb: "Millions of families suffer every year. Time for a full series rewatch on Peacock." };
+  }
+
+  document.getElementById('startBtn').addEventListener('click', startQuiz);
+  document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+  document.getElementById('restartBtn').addEventListener('click', startQuiz);
+</script>
+</body>
+</html>
